@@ -19,19 +19,8 @@ namespace MMS.ViewModels
         {
             _menuItem = new ObservableCollection<MenuItem>()
             {
-                /*new MenuItem("ADH/BTC", new Bot1 { DataContext = new Bot1ViewModel(PairName.BTCADH) }),
-                new MenuItem("ADH/ETH", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHADH) }),*/
-                new MenuItem("ETH/XRP", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHXRP) }),
-                new MenuItem("ETH/XLM", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHXLM) }),
-                new MenuItem("ETH/BCH", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHBCH) }),
-                new MenuItem("ETH/LTC", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHLTC) }),
-
-                new MenuItem("BTC/BCH", new Bot1 { DataContext = new Bot1ViewModel(PairName.BTCBCH) }),
-                new MenuItem("BTC/ETH", new Bot1 { DataContext = new Bot1ViewModel(PairName.BTCETH) }),
-                new MenuItem("BTC/LTC", new Bot1 { DataContext = new Bot1ViewModel(PairName.BTCLTC) }),
-                new MenuItem("BTC/XEM", new Bot1 { DataContext = new Bot1ViewModel(PairName.BTCXEM) }),
-                new MenuItem("BTC/XLM", new Bot1 { DataContext = new Bot1ViewModel(PairName.BTCXLM) }),
-                new MenuItem("BTC/XRP", new Bot1 { DataContext = new Bot1ViewModel(PairName.BTCXRP) }),
+                new MenuItem("ADH/BTC", new Bot1 { DataContext = new Bot1ViewModel(PairName.BTCADH) }),
+                new MenuItem("ADH/ETH", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHADH) })
             };
         }
 
