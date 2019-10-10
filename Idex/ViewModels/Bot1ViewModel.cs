@@ -315,34 +315,31 @@ namespace MMS.ViewModels
                 switch (Account1.SelectedPlatform)
                 {
                     case Platform.HitBTC:
-                        _model.startWork(
+                        _model.StartWork(
                             new HitBtcClient(Account1.ApiKey, Account1.ApiSecret, pairName),
                             new HitBtcClient(Account2.ApiKey, Account2.ApiSecret, pairName),
                             _direction,
-                            _targetVolume, 
-                            _reservedVolume,
+                            _targetVolume,
                             _swapTime,
                             Interval,
                             _ct);
                         break;
                     case Platform.Bistox:
-                        _model.startWork(
+                        _model.StartWork(
                             new BistoxClient(Account1.ApiKey, Account1.ApiSecret, pairName),
                             new BistoxClient(Account2.ApiKey, Account2.ApiSecret, pairName),
                             _direction,
                             _targetVolume,
-                            _reservedVolume,
                             _swapTime,
                             Interval,
                             _ct);
                         break;
                     default:
-                        _model.startWork(
+                        _model.StartWork(
                             new LiquidClient(Account1.ApiKey, Account1.ApiSecret, pairName),
                             new LiquidClient(Account2.ApiKey, Account2.ApiSecret, pairName),
                             _direction,
                             _targetVolume,
-                            _reservedVolume,
                             _swapTime,
                             Interval,
                             _ct);
@@ -353,7 +350,7 @@ namespace MMS.ViewModels
                 _ts.Cancel();
                 Task.WaitAny(_startTask);
                 Task.Run(() => {
-                    _model.stopWork();
+                    _model.StopWork();
                 }).Wait();
                 BotStarted = false;
                 RaisePropertyChanged();

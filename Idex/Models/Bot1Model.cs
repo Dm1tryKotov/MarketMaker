@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using MMS.Api;
-using System.Globalization;
 using System.Diagnostics;
 
 namespace MMS.Models
@@ -13,10 +12,12 @@ namespace MMS.Models
     public class Bot1Model : INotifyPropertyChanged
     {
         #region Notify Fields
+
         private string _log;
+
         public string Log
         {
-            get { return _log; }
+            get => _log;
             private set
             {
                 this.MutateVerbose(ref _log, value, RaisePropertyChanged());
@@ -24,62 +25,66 @@ namespace MMS.Models
                     this.MutateVerbose(ref _log, "", RaisePropertyChanged());
             }
         }
-        public bool BotStarted {
-            get { return _botStarted; }
-            set
+
+        public bool BotStarted
+        {
+            get => _botStarted;
+            private set
             {
                 _botStarted = value;
                 RaisePropertyChanged();
             }
         }
+
         private bool _botStarted;
 
         public float CurrentVolume
         {
-            get { return _currentVolume; }
-            set { this.MutateVerbose(ref _currentVolume, value, RaisePropertyChanged()); }
+            get => _currentVolume;
+            private set => this.MutateVerbose(ref _currentVolume, value, RaisePropertyChanged());
         }
+
         private float _currentVolume;
 
         public int MyMarketOrderVolume
         {
-            get { return _myMarketOrderVolume; }
-            set { this.MutateVerbose(ref _myMarketOrderVolume, value, RaisePropertyChanged()); }
+            get => _myMarketOrderVolume;
+            private set => this.MutateVerbose(ref _myMarketOrderVolume, value, RaisePropertyChanged());
         }
+
         private int _myMarketOrderVolume;
 
         public int OtherMarketOrderVolume
         {
-            get { return _otherMarketOrderVolume; }
-            set { this.MutateVerbose(ref _otherMarketOrderVolume, value, RaisePropertyChanged()); }
+            get => _otherMarketOrderVolume;
+            private set => this.MutateVerbose(ref _otherMarketOrderVolume, value, RaisePropertyChanged());
         }
+
         private int _otherMarketOrderVolume;
 
         public int MyTotalLimitVolume
         {
-            get { return _myTotalLimitVolume; }
-            private set
-            {
-                this.MutateVerbose(ref _myTotalLimitVolume, value, RaisePropertyChanged());
-            }
+            get => _myTotalLimitVolume;
+            private set => this.MutateVerbose(ref _myTotalLimitVolume, value, RaisePropertyChanged());
         }
+
         private int _myTotalLimitVolume;
 
         public int MyLimitVolumeClosedByOtherTraders
         {
-            get { return _myLimitVolumeClosedByOtherTraders; }
-            private set
-            {
-                this.MutateVerbose(ref _myLimitVolumeClosedByOtherTraders, value, RaisePropertyChanged());
-            }
+            get => _myLimitVolumeClosedByOtherTraders;
+            private set => this.MutateVerbose(ref _myLimitVolumeClosedByOtherTraders, value, RaisePropertyChanged());
         }
+
         private int _myLimitVolumeClosedByOtherTraders;
+
         #endregion
 
         #region Local Fields
+
         private IApiClient _client1;
         private IApiClient _client2;
-        
+
         private float _targetVolume;
         private float _reservedVolume;
         private int _swapTime;
@@ -90,30 +95,21 @@ namespace MMS.Models
         private Direction _trend;
 
         private Symbol _symbol;
+
         #endregion
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Bot1Model() {
-
-        }
-
-        private void cancelOrders() {
-            
-        }
-
-        public void stopWork() {
-            //Log += $"\n[{DateTime.Now.TimeOfDay}] Отменяем ордера";
-            //cancelOrders();
+        public void StopWork()
+        {
             Log += $"\n[{DateTime.Now.TimeOfDay}] Бот остановлен";
         }
 
-        public void startWork(
+        public void StartWork(
             IApiClient client1,
             IApiClient client2,
             Direction direction,
             int targetVolume,
-            int reservedVolume,
             int swapTime,
             int interval,
             CancellationToken ct)
@@ -129,10 +125,10 @@ namespace MMS.Models
             _swapTime = swapTime;
             _interval = interval;
 
-            //client1.cancelOrders();
             try
             {
-                Task.Run(() => {
+                Task.Run(() =>
+                {
                     _symbolLoaded = true;
                     try
                     {
@@ -147,6 +143,7 @@ namespace MMS.Models
                         BotStarted = false;
                         return;
                     }
+
                     if (_symbolLoaded)
                         Log += $"\n[{DateTime.Now.TimeOfDay}] информацию об инструменте полученa.";
                 }, ct).Wait(ct);
@@ -156,22 +153,26 @@ namespace MMS.Models
                 Log += $"\n[{DateTime.Now.TimeOfDay}] Внимание остановка бота.";
                 return;
             }
-            
+
             switch (_trend)
             {
                 case Direction.Up:
                     try
                     {
-
                     }
-                    catch (OperationCanceledException) { return; }
+                    catch (OperationCanceledException)
+                    {
+                    }
+
                     break;
                 case Direction.Down:
                     try
                     {
-
                     }
-                    catch (OperationCanceledException) { return; }
+                    catch (OperationCanceledException)
+                    {
+                    }
+
                     break;
                 case Direction.Flat:
                     try
@@ -180,25 +181,29 @@ namespace MMS.Models
                     }
                     catch (OperationCanceledException)
                     {
-                        return;
                     }
                     catch (Exception e)
                     {
-                        Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] Exception! => restartApp. Message: \n{e.Message}";
-                        try {
-                            Task.Run(() => {
-                                Task.Delay(60 * 3 * 1000).Wait();
-                                startWork(client1, client2, direction, targetVolume, reservedVolume, swapTime, interval, ct);
+                        Log +=
+                            $"\n[{DateTime.UtcNow.ToShortTimeString()}] Exception! => restartApp. Message: \n{e.Message}";
+                        try
+                        {
+                            Task.Run(() =>
+                            {
+                                Task.Delay(60 * 3 * 1000, ct).Wait(ct);
+                                StartWork(client1, client2, direction, targetVolume, swapTime, interval,
+                                    ct);
                             }, ct).Wait(ct);
-
                         }
-                        catch (OperationCanceledException ex) 
+                        catch (OperationCanceledException)
                         {
                             Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] перезапуск отменен.";
                         }
-                        return;
                     }
+
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -218,39 +223,29 @@ namespace MMS.Models
                 var minutesLeft = CalculateMinutesLeft();
                 var localDirection = Direction.Up;
                 var sideList = new List<CandleType>();
-                var swapVolumeList = new List<int>();
                 var targetVolume = _targetVolume - _currentVolume;
                 var directionVolumes = new List<int>();
                 var r = new Random();
-                bool toogle = true;
+                var swapVolumeList = GetRandomSwapVolumes(targetVolume, minutesLeft, _swapTime, r);
+                var toggle = true;
 
-                if (targetVolume <= 0)
-                {
-                    targetVolume = _reservedVolume;
-                }
-                /*
-                if(targetVolume < minutesLeft * _interval * _symbol.QuantityIncrement)
-                {
-                    Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] целевой обьем слишком мал. Мин значение: {_currentVolume + minutesLeft * _interval * _symbol.QuantityIncrement} токенов.";
-                    return;
-                }*/
-
-                swapVolumeList = GetRandomSwapVolumes(targetVolume, minutesLeft, _swapTime, r, _symbol.QuantityIncrement);
                 var deltaExtremum1 = 0f;
                 var deltaExtremum = 0f;
-                for (int i = 0; i < minutesLeft; i++ )
+                for (var i = 0; i < minutesLeft; i++)
                 {
                     Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] иттератор {i}, всего {minutesLeft} иттераций.";
-                    if (_currentVolume > _targetVolume && toogle)
+                    if (_currentVolume > _targetVolume && toggle)
                     {
-                        Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] достигнут целевой объем, переходим на резерв.";
-                        toogle = false;
+                        Log +=
+                            $"\n[{DateTime.UtcNow.ToShortTimeString()}] достигнут целевой объем, переходим на резерв.";
+                        toggle = false;
                         minutesLeft = CalculateMinutesLeft();
                         targetVolume = _reservedVolume;
-                        swapVolumeList = GetRandomSwapVolumes(targetVolume, minutesLeft, _swapTime, r, _symbol.QuantityIncrement);
+                        swapVolumeList = GetRandomSwapVolumes(targetVolume, minutesLeft, _swapTime, r);
                         i = -1;
                         continue;
                     }
+
                     if (i.Equals(0))
                     {
                         Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] подготавливаем систему к работе. свеча 0-я.";
@@ -273,91 +268,99 @@ namespace MMS.Models
                     }
 
                     var oneMinutesOrdersCount = r.Next(2, 2);
-                    var max = getMaximumPrice();
-                    var min = getMinimumPrice();
+                    var max = GetMaximumPrice();
+                    var min = GetMinimumPrice();
                     Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] начальная граница мин: {min:0.00000000}";
                     Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] начальная граница макс: {max:0.00000000}";
 
-                    min = (max - min) * deltaExtremum < _symbol.TickSize ? min + _symbol.TickSize : min + (max - min) * deltaExtremum;
+                    min = (max - min) * deltaExtremum < _symbol.TickSize
+                        ? min + _symbol.TickSize
+                        : min + (max - min) * deltaExtremum;
 
-                    max = (max - min) * deltaExtremum1 < _symbol.TickSize ? max - _symbol.TickSize : max - (max - min) * deltaExtremum1;
+                    max = (max - min) * deltaExtremum1 < _symbol.TickSize
+                        ? max - _symbol.TickSize
+                        : max - (max - min) * deltaExtremum1;
 
                     Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] пересчитанная граница мин: {min:0.00000000}";
                     Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] пересчитанная граница макс: {max:0.00000000}";
 
-                    var numbLenght = (int)Math.Abs(Math.Round(Math.Log10(_symbol.TickSize)));
+                    var numbLength = (int) Math.Abs(Math.Round(Math.Log10(_symbol.TickSize)));
 
                     var minuteVolumeList = GetRandomVolumesOld(directionVolumes[0], oneMinutesOrdersCount, r);
-                    Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] разбиваем объем {directionVolumes[0]:0.0} на 2 части";
+                    Log +=
+                        $"\n[{DateTime.UtcNow.ToShortTimeString()}] разбиваем объем {directionVolumes[0]:0.0} на 2 части";
                     foreach (var item in minuteVolumeList)
                     {
                         Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] {item: 0.0}";
                     }
+
                     directionVolumes.RemoveAt(0);
                     var side = localDirection == Direction.Up
-                                    ? CandleType.Up
-                                    : CandleType.Down;
+                        ? CandleType.Up
+                        : CandleType.Down;
 
                     try
                     {
-                        for (int j = 0; j < oneMinutesOrdersCount; j++)
+                        for (var j = 0; j < oneMinutesOrdersCount; j++)
                         {
                             if (j.Equals(0))
                             {
                                 Log += $"\n\n[{DateTime.UtcNow.ToShortTimeString()}] стадия открытия минутной свечи.";
-                                OpenFirstOrder(minuteVolumeList[0], r, side, ct, min + (max - min) / 2, max, min);
+                                OpenFirstOrder(minuteVolumeList[0], r, ct, min + (max - min) / 2, max, min);
                                 minuteVolumeList.RemoveAt(0);
-                            
                             }
                             else if (j == oneMinutesOrdersCount - 1)
                             {
-                                Log += $"\n\n[{DateTime.UtcNow.ToShortTimeString()}] стадия формирования минутной свечи.";
-                                var multiplier = Math.Pow(10,numbLenght);
-                                var delta = GetRandomVolumesOld((float)((max - min) * multiplier), _swapTime + 1, r, false)[i % _swapTime];
-                                OpenLastOrder(min, max, minuteVolumeList[0], i % _swapTime, delta, _swapTime, side, localDirection, r, ct);
+                                Log +=
+                                    $"\n\n[{DateTime.UtcNow.ToShortTimeString()}] стадия формирования минутной свечи.";
+                                var multiplier = Math.Pow(10, numbLength);
+                                var delta = GetRandomVolumesOld((float) ((max - min) * multiplier), _swapTime + 1, r,
+                                    false)[i % _swapTime];
+                                OpenLastOrder(min, max, minuteVolumeList[0], i % _swapTime, delta, _swapTime, side,
+                                    localDirection, r, ct);
                                 sideList.RemoveAt(0);
                                 minuteVolumeList.RemoveAt(0);
-                                Task.Run(() => Task.Delay((60 * _interval - DateTime.UtcNow.Second) * 1000).Wait(), ct).Wait(ct);
+                                Task.Run(() => Task.Delay((60 * _interval - DateTime.UtcNow.Second) * 1000, ct).Wait(ct), ct)
+                                    .Wait(ct);
                             }
                             else
                             {
                                 Log += $"\n\n[{DateTime.UtcNow.ToShortTimeString()}] стадия закрытия минутной свечи.";
                                 var volume = minuteVolumeList[0];
-                                OpenMidOrder(volume, r, side, min, max, ct);
+                                OpenMidOrder(volume, r, min, max, ct);
                                 minuteVolumeList.RemoveAt(0);
                             }
                         }
                     }
                     catch (Exception e)
                     {
-                        Log += "\n" + e.ToString();
+                        Log += "\n" + e;
                         throw new Exception();
                     }
+
                     CurrentVolume = _client1.get24Volume();
                     Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] Иттерация завершена. переходим к следующей.";
                 }
             }
         }
 
-        private void OpenMidOrder(int volume, Random r, CandleType candleType, float min, float max, CancellationToken ct)
+        private void OpenMidOrder(int volume, Random r, float min, float max,
+            CancellationToken ct)
         {
-
             Log += $"\n потоков используется:{Process.GetCurrentProcess().Threads.Count}";
             try
             {
                 Log += $"\n\n[{DateTime.UtcNow.ToShortTimeString()}:{DateTime.UtcNow.Second}] мид ордер через {4} сек.";
-                Task.Run(() => {
-                    Task.Delay(4 * 1000).Wait();
-                }, ct).Wait(ct);
+                Task.Run(() => { Task.Delay(4 * 1000, ct).Wait(ct); }, ct).Wait(ct);
 
-                var delta = (int)((max - min) * (int)Math.Pow(10, Math.Abs(Math.Round(Math.Log10(_symbol.TickSize)))) - 100);
+                var delta =
+                    (int) ((max - min) * (int) Math.Pow(10, Math.Abs(Math.Round(Math.Log10(_symbol.TickSize)))) - 100);
                 var price = min + r.Next(20, 80) / 100f * delta * _symbol.TickSize;
 
                 OpenOrder(price, volume, min + (max - min) / 2);
             }
             catch (OperationCanceledException)
             {
-                return;
             }
             catch (Exception e)
             {
@@ -365,13 +368,12 @@ namespace MMS.Models
             }
         }
 
-        private void OpenLastOrder(float min, float max, int v, int i, int delta, int swapTime, CandleType candleType, Direction direction, Random r, CancellationToken ct)
+        private void OpenLastOrder(float min, float max, int v, int i, int delta, int swapTime, CandleType candleType,
+            Direction direction, Random r, CancellationToken ct)
         {
             try
             {
-                Task.Run(() => {
-                    Task.Delay(53 * 1000 - DateTime.UtcNow.Second * 1000).Wait();
-                }, ct).Wait(ct);
+                Task.Run(() => { Task.Delay(53 * 1000 - DateTime.UtcNow.Second * 1000, ct).Wait(ct); }, ct).Wait(ct);
 
                 var price = 0f;
                 if (i == swapTime - 1)
@@ -391,15 +393,18 @@ namespace MMS.Models
                     switch (direction)
                     {
                         case Direction.Up:
-                                price = min + (i + 1) * delta * _symbol.TickSize;
+                            price = min + (i + 1) * delta * _symbol.TickSize;
                             break;
                         case Direction.Down:
-                                price = max - (i + 1) * delta * _symbol.TickSize;
+                            price = max - (i + 1) * delta * _symbol.TickSize;
                             break;
                         case Direction.Flat:
                             break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
                     }
                 }
+
                 price = price > max ? max : price;
                 price = price < min ? min : price;
 
@@ -407,7 +412,6 @@ namespace MMS.Models
             }
             catch (OperationCanceledException)
             {
-                return;
             }
             catch (Exception e)
             {
@@ -415,16 +419,17 @@ namespace MMS.Models
             }
         }
 
-        private void OpenFirstOrder(int v, Random r, CandleType candleType, CancellationToken ct, float separator, float max, float min)
+        private void OpenFirstOrder(int v, Random r, CancellationToken ct, float separator,
+            float max, float min)
         {
-
             Log += $"\n потоков используется:{Process.GetCurrentProcess().Threads.Count}";
             try
             {
-                Task.Run(() => {
+                Task.Run(() =>
+                {
                     if (DateTime.UtcNow.Second < 3) return;
-                    Task.Delay(60 * 1000 - DateTime.UtcNow.Second * 1000).Wait();
-                    Task.Delay(1000).Wait();
+                    Task.Delay(60 * 1000 - DateTime.UtcNow.Second * 1000, ct).Wait(ct);
+                    Task.Delay(1000, ct).Wait(ct);
                 }, ct).Wait(ct);
 
                 var prevCandle = _client1.getCandles(2, TimeFrame.M1).CandlesCollection[0];
@@ -437,7 +442,6 @@ namespace MMS.Models
             }
             catch (OperationCanceledException)
             {
-                return;
             }
             catch (Exception e)
             {
@@ -449,108 +453,103 @@ namespace MMS.Models
         {
             try
             {
-                Order limit = null;
-                Order market = null;
+                var type = OrderType.Limit;
+                var side = price > separator ? OrderSide.Sell : OrderSide.Buy;
 
-                OrderType type = OrderType.Limit;
-                OrderSide side = price > separator ? OrderSide.Sell : OrderSide.Buy;
+                var limit = _client1.openOrder(v.ToString(), side, type, price.ToString("0.00000000"));
 
-                limit = _client1.openOrder(v.ToString(), side, type, price.ToString("0.00000000"));
+                Log +=
+                    $"\n[{DateTime.UtcNow.ToShortTimeString()}:{DateTime.UtcNow.Second}]Ордер: Type = {type} , Side = {side}, Val = {limit.Quantity}, Pr = {limit.Price:0.00000000}, Time {limit.CreatedAt}. Размещен";
 
-                Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}:{DateTime.UtcNow.Second}]Ордер: Type = {type} , Side = {side}, Val = {limit.Quantity}, Pr = {limit.Price:0.00000000}, Time {limit.CreatedAt}. Размещен";
-
-                #region Aleksandr Liquid
-                /*
-                if (limit != null)
-                {
-                    var limit_trades = _client1.getTradesByOrder(limit.Id);
-                    if (limit_trades != null && limit_trades.Trades.Count > 0)
-                    {
-                        Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}:{DateTime.UtcNow.Second}]Ордер: Type = {limit.Type} , Side = {limit.Side}, Val = {limit.Quantity}, Pr = {limit.Price:0.0000000000}. Закрыт кем-то";
-                        _client1.cancelOrder(limit);
-                        foreach (var item in limit_trades.Trades)
-                        {
-                            MyLimitVolumeClosedByOtherTraders += (int)item.Quantity;
-                            MyTotalLimitVolume += (int)item.Quantity;
-                        }
-                        return;
-                    }
-                    MyTotalLimitVolume += (int)limit.Quantity;
-                }*/
+                var limitTrades = _client1.getTradesByOrder(limit.Id);
                 
-                #endregion
+                if (limitTrades != null && limitTrades.Trades.Count > 0)
+                {
+                    Log +=
+                        $"\n[{DateTime.UtcNow.ToShortTimeString()}:{DateTime.UtcNow.Second}]Ордер: Type = {limit.Type} , Side = {limit.Side}, Val = {limit.Quantity}, Pr = {limit.Price:0.0000000000}. Закрыт кем-то";
+                    _client1.cancelOrder(limit);
+                    foreach (var item in limitTrades.Trades)
+                    {
+                        MyLimitVolumeClosedByOtherTraders += (int) item.Quantity;
+                        MyTotalLimitVolume += (int) item.Quantity;
+                    }
+
+                    return;
+                }
+
+                MyTotalLimitVolume += (int) limit.Quantity;
+
+
                 type = OrderType.Market;
                 side = price > separator ? OrderSide.Buy : OrderSide.Sell;
 
-                market =  _client2.openOrder(v.ToString(), side, type, "");
+                var market = _client2.openOrder(v.ToString(), side, type, "");
 
-                Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}:{DateTime.UtcNow.Second}]Ордер: Type = {type} , Side = {side}, Val = {limit.Quantity}, Pr = {limit.Price:0.00000000}, Time {limit.CreatedAt}. Размещен";
-               
-                #region Aleksandr Liquid
-                /*if (market != null)
+                Log +=
+                    $"\n[{DateTime.UtcNow.ToShortTimeString()}:{DateTime.UtcNow.Second}]Ордер: Type = {type} , Side = {side}, Val = {limit.Quantity}, Pr = {limit.Price:0.00000000}, Time {limit.CreatedAt}. Размещен";
+
+                if (market == null) return;
                 {
                     var trades = _client2.getTradesByOrder(market.Id);
 
                     _client1.cancelOrder(limit);
 
-                    if (trades != null && trades.Trades != null)
+                    if (trades?.Trades == null) return;
+                    
+                    foreach (var item in trades.Trades)
                     {
-                        foreach (var item in trades.Trades)
-                        {
-                            MyMarketOrderVolume += limit.Price == item.Price
-                                ? (int)item.Quantity
-                                : 0;
-                            OtherMarketOrderVolume += limit.Price != item.Price
-                                ? (int)item.Quantity
-                                : 0;
-                        }
+                        MyMarketOrderVolume += Math.Abs(limit.Price - item.Price) < _symbol.TickSize
+                            ? (int)item.Quantity
+                            : 0;
+                        OtherMarketOrderVolume += Math.Abs(limit.Price - item.Price) > _symbol.TickSize
+                            ? (int)item.Quantity
+                            : 0;
                     }
-                }*/
-                #endregion
+                }
             }
             catch (Exception e)
             {
-                if (e.Message == "")
+                switch (e.Message)
                 {
-                    Log += "\nНа ликвиде профилактика. ждем 15м";
-                    Task.Run(() => Task.Delay(60 * 15 * 1000).Wait()).Wait();
-                }
-                else if(e.Message == "nonce")
-                {
-                    Log += "\nОщибка типа Nonce, открываем ордер заново.";
-                    OpenOrder(price, v, separator);
-                }
-                else
-                {
-                    Log += "\n" + e.ToString();
-                    throw new Exception();
+                    case "":
+                        Log += "\nНа ликвиде профилактика. ждем 15м";
+                        Task.Run(() => Task.Delay(60 * 15 * 1000).Wait()).Wait();
+                        break;
+                    case "nonce":
+                        Log += "\nОшибка типа Nonce, открываем ордер заново.";
+                        OpenOrder(price, v, separator);
+                        break;
+                    default:
+                        Log += "\n" + e;
+                        throw new Exception();
                 }
             }
         }
+
         /// <summary>
         /// разбить таргетВолюм на партКоунт разных частей.
         /// </summary>
         /// <param name="targetVolume">объем котоырй нужно рандомно разбить</param>
         /// <param name="partsCount">количество рандомных частей</param>
         /// <param name="r">Рандомайзер</param>
-        /// <param name="minSize">минимальный обьем одной рандомной части</param>
         /// <returns></returns>
-        private List<int> GetRandomVolumes(float targetVolume, int partsCount, Random r, bool withMin = true)
+        private List<int> GetRandomVolumes(float targetVolume, int partsCount, Random r)
         {
             Log += $"\n Рабиваем объем {targetVolume:0.0} на {partsCount} разных частей.";
             var parts = new List<int>();
             //var surplus = 0;
 
-            for (int i = 0; i < partsCount; i++)
+            for (var i = 0; i < partsCount; i++)
             {
-                float multiplier = r.Next(20, 150) / 100f;
-                var volume = (int)(targetVolume / partsCount * multiplier);
+                var multiplier = r.Next(20, 150) / 100f;
+                var volume = (int) (targetVolume / partsCount * multiplier);
                 volume -= volume % 5;
-                volume = volume < (int)_symbol.QuantityIncrement ? (int)_symbol.QuantityIncrement : volume;
+                volume = volume < (int) _symbol.QuantityIncrement ? (int) _symbol.QuantityIncrement : volume;
                 Log += $"\n{volume}";
                 parts.Add(volume);
                 //surplus += volume;
             }
+
             /*
             surplus = ((int)targetVolume - surplus) / partsCount;
 
@@ -577,41 +576,41 @@ namespace MMS.Models
             for (int i = 0; i < partsCount; i++)
             {
                 float multiplier = r.Next(20, 80) / 100f;
-                var volume = (int)(targetVolume / partsCount * multiplier);
+                var volume = (int) (targetVolume / partsCount * multiplier);
                 parts.Add(volume);
                 surplus += volume;
             }
-            
-            surplus = ((int)targetVolume - surplus) / partsCount;
 
-            for (int i = 0; i < partsCount; i++)
+            surplus = ((int) targetVolume - surplus) / partsCount;
+
+            for (var i = 0; i < partsCount; i++)
             {
                 parts[i] += surplus;
-                if (withMin)
+                if (!withMin) continue;
+                
+                if (parts[i] < _symbol.QuantityIncrement)
                 {
-                    if (parts[i] < _symbol.QuantityIncrement)
-                    {
-                        parts[i] = (int)_symbol.QuantityIncrement;
-                    }
+                    parts[i] = (int) _symbol.QuantityIncrement;
                 }
             }
+
             return parts;
         }
 
-        private List<int> GetRandomSwapVolumes(float targetVolume, int minutesLeft, int swapTime, Random r, float quoteIncrement)
+        private List<int> GetRandomSwapVolumes(float targetVolume, int minutesLeft, int swapTime, Random r)
         {
             var fullPartsCount = minutesLeft / swapTime;
-            if (minutesLeft / (float)swapTime > 0) fullPartsCount++;
+            if (minutesLeft / (float) swapTime > 0) fullPartsCount++;
             return GetRandomVolumes(targetVolume, fullPartsCount, r);
         }
 
-        private float getMinimumPrice()
+        private float GetMinimumPrice()
         {
             var result = _client1.getOrderBook().Bids[0].Price;
             return result;
         }
 
-        private float getMaximumPrice()
+        private float GetMaximumPrice()
         {
             var result = _client1.getOrderBook().Asks[0].Price;
             return result;
@@ -623,7 +622,8 @@ namespace MMS.Models
                 ? Direction.Down
                 : Direction.Up;
 
-            Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] меняем направление с {localDirection.ToString()} на {result.ToString()}";
+            Log +=
+                $"\n[{DateTime.UtcNow.ToShortTimeString()}] меняем направление с {localDirection.ToString()} на {result.ToString()}";
             return result;
         }
 
@@ -633,28 +633,29 @@ namespace MMS.Models
             var result = new List<CandleType>();
             var mainPart = Math.Ceiling(range * strong);
             var additionalPart = range - mainPart;
-            for (int i = 0; i < range; )
+            for (int i = 0; i < range;)
             {
                 if (i < 2)
                 {
                     result.Add(
                         localDirection.Equals(Direction.Up)
-                        ? CandleType.Up
-                        : CandleType.Down
-                        );
+                            ? CandleType.Up
+                            : CandleType.Down
+                    );
                     mainPart--;
                     i++;
                     continue;
                 }
+
                 if (r.Next(0, 2).Equals(0))
                 {
                     if (mainPart.Equals(0)) continue;
 
                     result.Add(
                         localDirection.Equals(Direction.Up)
-                        ? CandleType.Up
-                        : CandleType.Down
-                        );
+                            ? CandleType.Up
+                            : CandleType.Down
+                    );
                     mainPart--;
                     i++;
                 }
@@ -664,13 +665,14 @@ namespace MMS.Models
 
                     result.Add(
                         localDirection.Equals(Direction.Up)
-                        ? CandleType.Down
-                        : CandleType.Up
-                        );
+                            ? CandleType.Down
+                            : CandleType.Up
+                    );
                     additionalPart--;
                     i++;
                 }
             }
+
             return result;
         }
 
@@ -685,7 +687,7 @@ namespace MMS.Models
             var max = askElem.Price;
             var min = bidElem.Price;
 
-            var close = _client1.getCandles(timeFrame:TimeFrame.M1).CandlesCollection[0].Close;
+            var close = _client1.getCandles(timeFrame: TimeFrame.M1).CandlesCollection[0].Close;
 
             var result = max - close < close - min
                 ? Direction.Down
@@ -700,11 +702,11 @@ namespace MMS.Models
         {
             var now = DateTime.UtcNow;
             var nextDay = new DateTime(now.Year, now.Month, now.Day).AddDays(1);
-            var result = (int)(nextDay - now).TotalMinutes / 2;
+            var result = (int) (nextDay - now).TotalMinutes / 2;
             Log += $"\n[{DateTime.UtcNow.ToShortTimeString()}] дневная свеча закроется через {result} минут(у)";
             return result;
         }
-        
+
         private Action<PropertyChangedEventArgs> RaisePropertyChanged()
         {
             return args => PropertyChanged?.Invoke(this, args);
