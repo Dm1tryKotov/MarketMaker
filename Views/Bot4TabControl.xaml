@@ -1,0 +1,73 @@
+﻿<UserControl x:Class="MMS.Views.Bot4TabControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:models="clr-namespace:MMS.Models"
+             xmlns:local="clr-namespace:MMS.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel
+            Grid.Row="0"
+            Orientation="Horizontal">
+            <ListBox 
+                SelectedIndex="0"
+                Name="ItemsListBox"
+                FontSize="14"
+                ItemsSource="{Binding MenuItems}"
+                Grid.Row="0">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="models:AccountItem">
+                        <materialDesign:ColorZone
+                            Width="90"
+                            Height="40"
+                            Margin="-8"
+                            materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                            Content="{Binding Name}"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center">
+                            <materialDesign:ColorZone.Style>
+                                <Style>
+                                    <Setter Property="materialDesign:ColorZone.Mode" Value="PrimaryLight"/>
+                                    <Style.Triggers>
+                                        <DataTrigger 
+                                        Binding="{Binding Path=IsSelected, RelativeSource={
+                                        RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem }}}"
+                                        Value="True">
+                                            <Setter Property="materialDesign:ColorZone.Mode" Value="PrimaryMid"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </materialDesign:ColorZone.Style>
+                        </materialDesign:ColorZone>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Button 
+                Width="50"
+                Margin="10 0 0 0"
+                Command="{Binding AddNewTab}">
+                <materialDesign:PackIcon Kind="Plus" Margin="0"/>
+            </Button>
+        </StackPanel>
+        <ScrollViewer 
+            Grid.Row="1"
+            HorizontalScrollBarVisibility="{Binding ElementName=ItemsListBox, Path=SelectedItem.HorizontalScrollBarVisibilityRequirement}"
+            VerticalScrollBarVisibility="{Binding ElementName=ItemsListBox, Path=SelectedItem.VerticalScrollBarVisibilityRequirement}"
+            Padding="{Binding ElementName=ItemsListBox, Path=SelectedItem.MarginRequirement}">
+            <ContentControl 
+                Content="{Binding ElementName=ItemsListBox, Path=SelectedItem.Content}"/>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
