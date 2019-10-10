@@ -19,8 +19,6 @@ namespace MMS.ViewModels
         {
             _menuItem = new ObservableCollection<MenuItem>()
             {
-                /*new MenuItem("ADH/BTC", new Bot1 { DataContext = new Bot1ViewModel(PairName.BTCADH) }),
-                new MenuItem("ADH/ETH", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHADH) }),*/
                 new MenuItem("ETH/XRP", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHXRP) }),
                 new MenuItem("ETH/XLM", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHXLM) }),
                 new MenuItem("ETH/BCH", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHBCH) }),

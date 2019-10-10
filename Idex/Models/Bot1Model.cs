@@ -461,51 +461,16 @@ namespace MMS.Models
                 Log +=
                     $"\n[{DateTime.UtcNow.ToShortTimeString()}:{DateTime.UtcNow.Second}]Ордер: Type = {type} , Side = {side}, Val = {limit.Quantity}, Pr = {limit.Price:0.00000000}, Time {limit.CreatedAt}. Размещен";
 
-                var limitTrades = _client1.getTradesByOrder(limit.Id);
-                
-                if (limitTrades != null && limitTrades.Trades.Count > 0)
-                {
-                    Log +=
-                        $"\n[{DateTime.UtcNow.ToShortTimeString()}:{DateTime.UtcNow.Second}]Ордер: Type = {limit.Type} , Side = {limit.Side}, Val = {limit.Quantity}, Pr = {limit.Price:0.0000000000}. Закрыт кем-то";
-                    _client1.cancelOrder(limit);
-                    foreach (var item in limitTrades.Trades)
-                    {
-                        MyLimitVolumeClosedByOtherTraders += (int) item.Quantity;
-                        MyTotalLimitVolume += (int) item.Quantity;
-                    }
-
-                    return;
-                }
-
-                MyTotalLimitVolume += (int) limit.Quantity;
+                _client1.getTradesByOrder(limit.Id);
 
 
                 type = OrderType.Market;
                 side = price > separator ? OrderSide.Buy : OrderSide.Sell;
 
-                var market = _client2.openOrder(v.ToString(), side, type, "");
+                _client2.openOrder(v.ToString(), side, type, "");
 
                 Log +=
                     $"\n[{DateTime.UtcNow.ToShortTimeString()}:{DateTime.UtcNow.Second}]Ордер: Type = {type} , Side = {side}, Val = {limit.Quantity}, Pr = {limit.Price:0.00000000}, Time {limit.CreatedAt}. Размещен";
-
-                if (market == null) return;
-                {
-                    var trades = _client2.getTradesByOrder(market.Id);
-
-                    _client1.cancelOrder(limit);
-
-                    if (trades?.Trades == null) return;
-                    
-                    foreach (var item in trades.Trades)
-                    {
-                        MyMarketOrderVolume += Math.Abs(limit.Price - item.Price) < _symbol.TickSize
-                            ? (int)item.Quantity
-                            : 0;
-                        OtherMarketOrderVolume += Math.Abs(limit.Price - item.Price) > _symbol.TickSize
-                            ? (int)item.Quantity
-                            : 0;
-                    }
-                }
             }
             catch (Exception e)
             {
