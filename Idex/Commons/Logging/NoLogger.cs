@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Idex.Commons.Logging
+namespace MMS.Commons.Logging
 {
     public class NoLogger : ILogger
   {

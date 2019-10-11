@@ -1,4 +1,4 @@
-﻿namespace Idex.Commons.Logging
+﻿namespace MMS.Commons.Logging
 {
     public enum LogLevel
     {

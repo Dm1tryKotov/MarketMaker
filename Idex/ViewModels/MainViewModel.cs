@@ -10,7 +10,6 @@ namespace MMS.ViewModels
     {
         public MainViewModel(ISnackbarMessageQueue snackbarMessageQueue) {
             if (snackbarMessageQueue == null) throw new ArgumentNullException(nameof(snackbarMessageQueue));
-
             menuItems = new[]
             {
                 new MenuItem("На главную", new Home(){ DataContext = new HomeViewModel() }),
