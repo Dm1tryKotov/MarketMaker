@@ -62,6 +62,10 @@
     <Reference Include="DevExpress.Mvvm.UI, Version=18.2.0.0, Culture=neutral, PublicKeyToken=382ad28f6ae31f30, processorArchitecture=MSIL">
       <HintPath>..\packages\DevExpressMvvm.18.2.3\lib\net452\DevExpress.Mvvm.UI.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Annotations, Version=2019.1.3.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325">
+      <HintPath>..\packages\JetBrains.Annotations.2019.1.3\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="LiquidQuoine.Net, Version=0.2.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\LiquidQuoine.Net.0.2.4\lib\netstandard2.0\LiquidQuoine.Net.dll</HintPath>
     </Reference>
@@ -153,6 +157,14 @@
     <Compile Include="Api\HitBtcClient.cs" />
     <Compile Include="Api\IApiClient.cs" />
     <Compile Include="Api\LiquidClient.cs" />
+    <Compile Include="Commons\Logging\ILogContext.cs" />
+    <Compile Include="Commons\Logging\ILogger.cs" />
+    <Compile Include="Commons\Logging\ILoggerFactory.cs" />
+    <Compile Include="Commons\Logging\LoggerFactory.cs" />
+    <Compile Include="Commons\Logging\LogLevel.cs" />
+    <Compile Include="Commons\Logging\NoLogContext.cs" />
+    <Compile Include="Commons\Logging\NoLogger.cs" />
+    <Compile Include="Commons\Logging\NoLoggerFactory.cs" />
     <Compile Include="Domain\InverseAndBooleansToBooleanConverter.cs" />
     <Compile Include="Domain\IsIntegerValidationRule.cs" />
     <Compile Include="Domain\NotEmptyValidationRule.cs" />
@@ -337,7 +349,6 @@
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
