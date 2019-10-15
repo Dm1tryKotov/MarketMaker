@@ -23,6 +23,8 @@ namespace MMS.ViewModels
                 new MenuItem("ETH/XLM", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHXLM) }),
                 new MenuItem("ETH/BCH", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHBCH) }),
                 new MenuItem("ETH/LTC", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHLTC) }),
+                new MenuItem("ETH/XEM", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHLTC) }),
+                new MenuItem("ETH/USDT", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHLTC) }),
 
                 new MenuItem("BTC/BCH", new Bot1 { DataContext = new Bot1ViewModel(PairName.BTCBCH) }),
                 new MenuItem("BTC/ETH", new Bot1 { DataContext = new Bot1ViewModel(PairName.BTCETH) }),
@@ -31,14 +33,6 @@ namespace MMS.ViewModels
                 new MenuItem("BTC/XLM", new Bot1 { DataContext = new Bot1ViewModel(PairName.BTCXLM) }),
                 new MenuItem("BTC/XRP", new Bot1 { DataContext = new Bot1ViewModel(PairName.BTCXRP) }),
             };
-        }
-
-        public ICommand AddNewTab {
-            get {
-                return new DelegateCommand(()=> {
-                    _menuItem.Add(new MenuItem("ETH/XLM", new Bot1 { DataContext = new Bot1ViewModel(PairName.ETHXLM) }));
-                }, ()=> MenuItems.Count != 2);
-            }
         }
     }
 }

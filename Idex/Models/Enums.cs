@@ -32,6 +32,8 @@ namespace MMS.Models
         ETHBCH,
         ETHLTC,
         ETHLRC,
+        ETHXEM,
+        ETHUSDT,
         BTCADH,
         BTCLRC,
         BTCBCH,

@@ -461,9 +461,6 @@ namespace MMS.Models
                 Log +=
                     $"\n[{DateTime.UtcNow.ToShortTimeString()}:{DateTime.UtcNow.Second}]Ордер: Type = {type} , Side = {side}, Val = {limit.Quantity}, Pr = {limit.Price:0.00000000}, Time {limit.CreatedAt}. Размещен";
 
-                _client1.getTradesByOrder(limit.Id);
-
-
                 type = OrderType.Market;
                 side = price > separator ? OrderSide.Buy : OrderSide.Sell;
 
@@ -502,7 +499,6 @@ namespace MMS.Models
         {
             Log += $"\n Рабиваем объем {targetVolume:0.0} на {partsCount} разных частей.";
             var parts = new List<int>();
-            //var surplus = 0;
 
             for (var i = 0; i < partsCount; i++)
             {
@@ -512,24 +508,8 @@ namespace MMS.Models
                 volume = volume < (int) _symbol.QuantityIncrement ? (int) _symbol.QuantityIncrement : volume;
                 Log += $"\n{volume}";
                 parts.Add(volume);
-                //surplus += volume;
             }
-
-            /*
-            surplus = ((int)targetVolume - surplus) / partsCount;
-
-            for (int i = 0; i < partsCount; i++)
-            {
-                parts[i] += surplus;
-                if (withMin)
-                {
-                    parts[i] -= parts[i] % 5;
-                    if (parts[i] < _symbol.QuantityIncrement)
-                    {
-                        parts[i] = (int)_symbol.QuantityIncrement;
-                    }
-                }
-            }*/
+            
             return parts;
         }
 

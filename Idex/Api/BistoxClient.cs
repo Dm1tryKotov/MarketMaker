@@ -203,6 +203,24 @@ namespace MMS.Api
                         0.0001f
                         );
                     break;
+                case PairName.ETHXEM:
+                    _pairName = "ethxem";
+                    _symbol = new Symbol(
+                        "xem",
+                        "eth",
+                        0.00000001f,
+                        0.0001f
+                    );
+                    break;
+                case PairName.ETHUSDT:
+                    _pairName = "ethusdt";
+                    _symbol = new Symbol(
+                        "usdt",
+                        "eth",
+                        0.00000001f,
+                        0.0001f
+                    );
+                    break;
                 case PairName.BTCBCH:
                     _pairName = "btcbch";
                     _symbol = new Symbol(
